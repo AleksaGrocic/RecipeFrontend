@@ -274,16 +274,15 @@ i {
 }
 
 .recipe__image {
-  width: 50px;
+  width: 280px;
 }
 
 .recipe__image img {
   width: 100%;
-  border: 3px solid var(--selective-blue);
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 0.75;
   object-fit: cover;
   object-position: center;
-  border-radius: var(--radius-circle);
+  border-radius: 10px;
 }
 
 .recipe_name {
@@ -291,9 +290,10 @@ i {
   font-size: 1.25rem;
   text-align: center;
   font-weight: 600;
+  padding: 5px 0px 5px 0px;
 }
 
-.recipe_title {
+.recipe_category {
   font-size: 11px;
   background-color: #dfe7e8;
   color: var(--kappel);
@@ -301,6 +301,7 @@ i {
   border-radius: 13px;
   font-weight: 600;
   padding: 2px;
+  width: 75px;
 }
 
 .recipe__body {
