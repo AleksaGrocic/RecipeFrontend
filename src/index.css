@@ -1,8 +1,11 @@
 /* GLOBAL VARIABLES */
 :root {
-  --selective-blue: hsl(210, 69%, 25%);
-  --selective-blue-2: hsl(210, 69%, 19%);
-  --selective-blue-3: hsl(210, 69%, 35%);
+  --background-color: hsl(42, 28%, 88%);
+  --background-color-2: hsl(43, 24%, 83%);
+  --accent: hsl(185, 100%, 23%);
+  --accent-2: hsl(185, 100%, 23%);
+  --accent-3: hsl(185, 94%, 20%);
+  --card-background-color: hsl(0, 0%, 98%);
   --sky-blue: hsl(220, 48%, 90%);
   --light-gray: hsl(233, 100%, 98%);
   --light-gray-2: hsl(233, 100%, 88%);
@@ -128,7 +131,7 @@
 
 body {
   font-family: var(--ff-poppins);
-  background-color: var(--white);
+  background-color: var(--background-color);
   line-height: var(--lh-1);
   -webkit-font-smoothing: antialiased;
 }
@@ -212,7 +215,7 @@ i {
 
 .btn {
   color: var(--white);
-  background-color: var(--selective-blue);
+  background-color: #006d77;
   font-size: 0.8rem;
   padding: 3px 10px;
   white-space: normal;
@@ -226,7 +229,7 @@ i {
 }
 
 .btn:hover {
-  background-color: var(--selective-blue-3);
+  background-color: var(--accent-3);
 }
 
 .btn-danger:hover {
@@ -256,12 +259,16 @@ i {
 
 .recipe__item {
   width: 100%;
-  background-color: #ecf1f1;
+  background-color: var(--card-background-color);
   padding: 0.88rem;
   border-radius: var(--radius-5);
   cursor: pointer;
   min-height: max-content;
   /* max-width: 280px; */
+}
+
+.recipe__item:hover {
+  opacity: 85%;
 }
 
 .recipe__header {
@@ -345,7 +352,7 @@ i {
   padding: 5px 10px;
   text-decoration: none;
   transition: background-color 0.3s;
-  border: 1px solid #ddd;
+  border: 1px solid #cccccc;
   cursor: pointer;
 }
 
@@ -360,13 +367,13 @@ i {
 }
 
 .pagination a.active {
-  background-color: var(--selective-blue);
+  background-color: var(--accent);
   color: white;
-  border: 1px solid var(--selective-blue);
+  border: 1px solid var(--accent);
 }
 
 .pagination a:hover:not(.active) {
-  background-color: #ecf1f1;
+  background-color: var(--card-background-color);
 }
 
 /* PROFILE */
@@ -387,15 +394,14 @@ i {
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  background-color: #ecf1f1;
+  background-color: var(--card-background-color);
   padding: 10px;
   border-radius: var(--radius-5);
 }
 
 .profile__details img {
-  width: 120px;
+  width: 100%;
   border-radius: var(--radius-5);
-  border: 3px solid var(--selective-blue);
   aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center;
@@ -415,7 +421,7 @@ i {
 }
 
 .profile__settings {
-  background-color: #ecf1f1;
+  background-color: var(--card-background-color);
   padding: 10px;
   border-radius: var(--radius-5);
 }
@@ -461,11 +467,11 @@ i {
 .modal__header i::before {
   border-radius: 50%;
   padding: 0.5rem;
-  background-color: hsl(0, 0%, 90%);
+  background-color: var(--card-background-color);
 }
 
 .modal__header i:hover::before {
-  background-color: hsl(0, 0%, 90%);
+  background-color: var(--card-background-color);
 }
 
 .modal__body {
@@ -563,7 +569,7 @@ dialog[open] {
 
 input[type="file"]::file-selector-button {
   color: var(--white);
-  background-color: var(--selective-blue);
+  background-color: var(--accent);
   font-size: 0.8rem;
   padding: 7px 15px;
   white-space: normal;
@@ -575,18 +581,19 @@ input[type="file"]::file-selector-button {
 }
 
 input[type="file"]::file-selector-button:hover {
-  background-color: var(--selective-blue-3);
+  background-color: var(--accent-3);
 }
 
 .form_footer {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
   margin-top: 35px;
 }
 
 .form_footer .btn {
   padding: 7px 15px;
+  margin-right: 15px;
 }
 
 @media (max-width: 584px) {
@@ -616,4 +623,114 @@ input[type="file"]::file-selector-button:hover {
   /* .container .content .category{
 	  flex-direction: column;
 	} */
+}
+
+.switch_box {
+  float: right;
+  padding-bottom: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 45px; /* 60px * 0.75 */
+  height: 25.5px; /* 34px * 0.75 */
+  margin-left: 5px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 19.5px; /* 26px * 0.75 */
+  width: 19.5px; /* 26px * 0.75 */
+  left: 3px; /* 4px * 0.75 */
+  bottom: 3px; /* 4px * 0.75 */
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: var(--accent);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 0.75px var(--accent); /* 1px * 0.75 */
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(19.5px); /* 26px * 0.75 */
+  -ms-transform: translateX(19.5px); /* 26px * 0.75 */
+  transform: translateX(19.5px); /* 26px * 0.75 */
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 25.5px; /* 34px * 0.75 */
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+textarea {
+  padding: 0 5px 0 5px;
+  width: 100%;
+  resize: none;
+  max-height: fit-content;
+  outline: none;
+}
+
+.textarea_off {
+  border: none;
+  background-color: var(--card-background-color);
+}
+
+.input_textarea {
+  resize: vertical;
+  height: 200px;
+  width: 507px;
+  min-height: 200px;
+  max-height: 440px;
+}
+
+.recipe__name {
+  display: flex;
+  width: 100%;
+  max-height: 500px;
+  user-select: none;
+  word-break: break-all;
+}
+
+.muted_text {
+  color: #3c3f3f;
+}
+
+.back_to_list {
+  padding: 3px;
+}
+
+.back_to_list:hover {
+  border-radius: var(--radius-5);
+  background-color: var(--background-color-2);
 }

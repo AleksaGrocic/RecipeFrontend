@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import Recipe from "./Recipe";
 
@@ -25,7 +26,7 @@ const RecipeList = ({ data, currentPage, getAllRecipes }) => {
           {data &&
             [...Array(data.totalPages).keys()].map((page, index) => (
               <a
-                onClick={getAllRecipes(page)}
+                onClick={() => getAllRecipes(page)}
                 className={currentPage === page ? "active" : ""}
                 key={page}
               >

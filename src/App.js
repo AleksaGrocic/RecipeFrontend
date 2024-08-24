@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { getRecipes } from "./api/RecipeService";
+import { getRecipes, saveRecipe, updateImage } from "./api/RecipeService";
 import Header from "./components/Header";
 import RecipeList from "./components/RecipeList";
+import RecipeDetails from "./components/RecipeDetails";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { toastError, toastSuccess } from "./api/ToastService";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const modalRef = useRef();
@@ -17,15 +21,35 @@ function App() {
   });
   const [file, setFile] = useState(undefined);
 
-  const getAllRecipes = async (page = 0, size = 10) => {
+  const getAllRecipes = async (page = 0, size = 8) => {
     try {
       setCurrentPage(page);
       const { data } = await getRecipes(page, size);
       setData(data);
-      console.log(data);
     } catch (error) {
       console.log(error);
-      fileRef.current.value = null;
+      toastError(error.message);
+    }
+  };
+
+  const updateRecipe = async (recipe) => {
+    try {
+      const { data } = await saveRecipe(recipe);
+      console.log(data);
+      toastSuccess("Recipe updated!");
+    } catch (error) {
+      console.log(error);
+      toastError(error.message);
+    }
+  };
+
+  const changeImage = async (formData) => {
+    try {
+      const { data: imageUrl } = await updateImage(formData);
+      toastSuccess("Image updated!");
+    } catch (error) {
+      console.log(error);
+      toastError(error.message);
     }
   };
 
@@ -34,6 +58,30 @@ function App() {
 
   const onChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
+  };
+
+  const handleNewRecipe = async (event) => {
+    event.preventDefault();
+    try {
+      const { data } = await saveRecipe(values);
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+      formData.append("id", data.id);
+      const { data: imageUrl } = await updateImage(formData);
+      toggleModal(false);
+      setFile(undefined);
+      fileRef.current.value = null;
+      setValues({
+        name: "",
+        category: "",
+        recipe: "",
+      });
+      getAllRecipes();
+      toastSuccess("Recipe created!");
+    } catch (error) {
+      console.log(error);
+      toastError(error.message);
+    }
   };
 
   useEffect(() => {
@@ -57,6 +105,16 @@ function App() {
                 />
               }
             />
+            <Route
+              path="/recipes/:id"
+              element={
+                <RecipeDetails
+                  updateRecipe={updateRecipe}
+                  changeImage={changeImage}
+                  getAllRecipes={getAllRecipes}
+                />
+              }
+            />
           </Routes>
         </div>
       </main>
@@ -68,7 +126,7 @@ function App() {
         </div>
         <div className="divider"></div>
         <div className="modal__body">
-          <form>
+          <form onSubmit={handleNewRecipe}>
             <div className="user-details">
               <div className="input-box">
                 <span className="details">Name</span>
@@ -92,8 +150,8 @@ function App() {
               </div>
               <div className="input-box">
                 <span className="details">Recipe</span>
-                <input
-                  type="text"
+                <textarea
+                  className="input_textarea"
                   name="recipe"
                   value={values.recipe}
                   onChange={onChange}
@@ -126,6 +184,7 @@ function App() {
           </form>
         </div>
       </dialog>
+      <ToastContainer />
     </>
   );
 }
