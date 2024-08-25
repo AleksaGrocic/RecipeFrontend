@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { getRecipes, saveRecipe, updateImage } from "./api/RecipeService";
+import { getRecipes, saveRecipe } from "./api/RecipeService";
 import Header from "./components/Header";
 import RecipeList from "./components/RecipeList";
 import RecipeDetails from "./components/RecipeDetails";
@@ -66,7 +66,6 @@ function App() {
 
   const changeImage = async (formData) => {
     try {
-      const { data: imageUrl } = await updateImage(formData);
       toastSuccess("Image updated!");
     } catch (error) {
       console.log(error);
@@ -88,7 +87,6 @@ function App() {
       const formData = new FormData();
       formData.append("file", file, file.name);
       formData.append("id", data.id);
-      const { data: imageUrl } = await updateImage(formData);
       toggleModal(false);
       setFile(undefined);
       fileRef.current.value = null;

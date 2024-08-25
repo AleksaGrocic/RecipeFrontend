@@ -101,7 +101,7 @@ const RecipeDetails = ({
 
   useEffect(() => {
     fetchRecipe(id);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     adjustTextareaHeight();
