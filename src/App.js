@@ -14,6 +14,8 @@ function App() {
   const fileRef = useRef();
   const [data, setData] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [values, setValues] = useState({
     name: "",
     category: "",
@@ -21,11 +23,28 @@ function App() {
   });
   const [file, setFile] = useState(undefined);
 
-  const getAllRecipes = async (page = 0, size = 8) => {
+  const getAllRecipes = async (
+    page = 0,
+    size = 1000,
+    category = selectedCategory
+  ) => {
     try {
-      setCurrentPage(page);
       const { data } = await getRecipes(page, size);
-      setData(data);
+
+      const uniqueCategories = [
+        "All",
+        ...new Set(data.content.map((recipe) => recipe.category)),
+      ];
+      setCategories(uniqueCategories);
+
+      const filteredRecipes = { ...data };
+      filteredRecipes.content =
+        category === "All"
+          ? data.content
+          : data.content.filter((recipe) => recipe.category === category);
+
+      setData(filteredRecipes);
+      console.log(filteredRecipes);
     } catch (error) {
       console.log(error);
       toastError(error.message);
@@ -84,6 +103,13 @@ function App() {
     }
   };
 
+  const handleCategoryChange = async (event) => {
+    const newCategory = event.target.value;
+    setSelectedCategory(newCategory);
+    await getAllRecipes(0, 1000, newCategory);
+    setCurrentPage(0);
+  };
+
   useEffect(() => {
     getAllRecipes();
   }, []);
@@ -93,6 +119,21 @@ function App() {
       <Header toggleModal={toggleModal} numberOfRecipes={data.totalElements} />
       <main className="main">
         <div className="container">
+          <div className="category-filter">
+            <label htmlFor="category-select">Filter by category: </label>
+            <select
+              id="category-select"
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <Routes>
             <Route path="/" element={<Navigate to={"/recipes"} />} />
             <Route
