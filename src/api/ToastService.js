@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 
 const toastConfig = {
   position: "bottom-left",
-  autoClose: 1500,
+  autoClose: 2000,
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,

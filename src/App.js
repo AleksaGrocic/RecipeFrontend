@@ -4,7 +4,7 @@ import { getRecipes, saveRecipe, updateImage } from "./api/RecipeService";
 import Header from "./components/Header";
 import RecipeList from "./components/RecipeList";
 import RecipeDetails from "./components/RecipeDetails";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { toastError, toastSuccess } from "./api/ToastService";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,7 +12,8 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   const modalRef = useRef();
   const fileRef = useRef();
-  const [data, setData] = useState({});
+  const location = useLocation();
+  const [data, setData] = useState({ content: [], totalElements: 0 });
   const [currentPage, setCurrentPage] = useState(0);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -22,6 +23,7 @@ function App() {
     recipe: "",
   });
   const [file, setFile] = useState(undefined);
+  const [selectedTab, setSelectedTab] = useState("recipeList");
 
   const getAllRecipes = async (
     page = 0,
@@ -110,29 +112,43 @@ function App() {
     setCurrentPage(0);
   };
 
+  const recipeDeletedToast = () => {
+    toastSuccess("Recipe deleted!");
+  };
+
   useEffect(() => {
     getAllRecipes();
   }, []);
+
+  useEffect(() => {
+    if (location.pathname === "/recipes") {
+      setSelectedTab("recipeList");
+    } else if (location.pathname.startsWith("/recipes/")) {
+      setSelectedTab("recipeDetails");
+    }
+  }, [location]);
 
   return (
     <>
       <Header toggleModal={toggleModal} numberOfRecipes={data.totalElements} />
       <main className="main">
         <div className="container">
-          <div className="category-filter">
-            <label htmlFor="category-select">Filter by category: </label>
-            <select
-              id="category-select"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
+          {data.content.length > 0 && selectedTab === "recipeList" && (
+            <div className="category-filter">
+              <label htmlFor="category-select">Filter by category: </label>
+              <select
+                id="category-select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <Routes>
             <Route path="/" element={<Navigate to={"/recipes"} />} />
@@ -153,6 +169,7 @@ function App() {
                   updateRecipe={updateRecipe}
                   changeImage={changeImage}
                   getAllRecipes={getAllRecipes}
+                  recipeDeletedToast={recipeDeletedToast}
                 />
               }
             />
@@ -211,15 +228,15 @@ function App() {
               </div>
             </div>
             <div className="form_footer">
+              <button type="submit" className="btn">
+                Save
+              </button>
               <button
                 onClick={() => toggleModal(false)}
                 type="button"
                 className="btn btn-danger"
               >
                 Cancel
-              </button>
-              <button type="submit" className="btn">
-                Save
               </button>
             </div>
           </form>

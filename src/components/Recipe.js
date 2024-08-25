@@ -9,11 +9,7 @@ const Recipe = ({ recipe }) => {
           <img src={recipe.imageUrl} alt={recipe.name} />
         </div>
         <div className="recipe__details">
-          <p className="recipe_name">
-            {recipe.name.length > 24
-              ? recipe.name.substring(0, 21) + "..."
-              : recipe.name}
-          </p>
+          <p className="recipe_name">{recipe.name}</p>
           <p className="recipe_category">{recipe.category}</p>
         </div>
       </div>

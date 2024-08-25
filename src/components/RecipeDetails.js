@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { deleteRecipe, getRecipe } from "../api/RecipeService";
+import ConfirmationModal from "./ConfirmationModal";
 
-const RecipeDetails = ({ updateRecipe, changeImage, getAllRecipes }) => {
+const RecipeDetails = ({
+  updateRecipe,
+  changeImage,
+  getAllRecipes,
+  recipeDeletedToast,
+}) => {
   const [recipe, setRecipe] = useState({
     id: "",
     name: "",
@@ -11,15 +17,13 @@ const RecipeDetails = ({ updateRecipe, changeImage, getAllRecipes }) => {
     imageUrl: "",
   });
   const [editMode, setEditMode] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const inputRef = useRef();
-
   const switchRef = useRef();
-
   const textareaRef = useRef();
 
   const { id } = useParams();
-
   const navigate = useNavigate();
 
   const fetchRecipe = async (id) => {
@@ -53,10 +57,26 @@ const RecipeDetails = ({ updateRecipe, changeImage, getAllRecipes }) => {
 
   const handleEditMode = (event) => {
     setEditMode(event.target.checked);
+    fetchRecipe(id);
+  };
+
+  const handleDeleteRecipe = async () => {
+    setShowConfirmModal(true);
+  };
+
+  const confirmDeleteRecipe = async () => {
+    setShowConfirmModal(false);
+    await deleteRecipe(id);
+    recipeDeletedToast();
+    handleBackToList();
+  };
+
+  const cancelDeleteRecipe = () => {
+    setShowConfirmModal(false);
   };
 
   const handleBackToList = () => {
-    getAllRecipes();
+    getAllRecipes(0, 1000);
     navigate("/recipes");
   };
 
@@ -169,7 +189,11 @@ const RecipeDetails = ({ updateRecipe, changeImage, getAllRecipes }) => {
             <button type="submit" className="btn">
               Save
             </button>
-            <button type="button" className="btn btn-danger">
+            <button
+              onClick={handleDeleteRecipe}
+              type="button"
+              className="btn btn-danger"
+            >
               Delete
             </button>
           </div>
@@ -187,6 +211,12 @@ const RecipeDetails = ({ updateRecipe, changeImage, getAllRecipes }) => {
           accept="image/*"
         />
       </form>
+
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onConfirm={confirmDeleteRecipe}
+        onCancel={cancelDeleteRecipe}
+      />
     </>
   );
 };
