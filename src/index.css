@@ -538,6 +538,10 @@ dialog[open] {
   }
 }
 
+.profile__metadata .btn {
+  width: 155px;
+}
+
 /* IMPORTED STYLES */
 .user-details {
   display: flex;
@@ -740,4 +744,14 @@ textarea {
 .back_to_list:hover {
   border-radius: var(--radius-5);
   background-color: var(--background-color-2);
+}
+
+.save-delete-buttons {
+  margin-top: 20px;
+}
+
+.save-delete-buttons .btn {
+  padding: 7px 15px;
+  margin-right: 15px;
+  width: 70px;
 }

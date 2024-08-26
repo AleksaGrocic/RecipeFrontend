@@ -7,7 +7,7 @@ const RecipeDetails = ({
   updateRecipe,
   changeImage,
   getAllRecipes,
-  recipeDeletedToast,
+  recipeDeleted,
 }) => {
   const [recipe, setRecipe] = useState({
     id: "",
@@ -67,7 +67,8 @@ const RecipeDetails = ({
   const confirmDeleteRecipe = async () => {
     setShowConfirmModal(false);
     await deleteRecipe(id);
-    recipeDeletedToast();
+    getAllRecipes(0, 1000);
+    await recipeDeleted();
     handleBackToList();
   };
 
@@ -161,11 +162,23 @@ const RecipeDetails = ({
             <img src={recipe.imageUrl} alt={recipe.name} />
             <div
               style={{ display: editMode ? "block" : "none" }}
-              className="profie__metadata"
+              className="profile__metadata"
             >
               <button onClick={selectImage} className="btn">
                 <i className="bi bi-cloud-upload"> </i>Change image
               </button>
+              <div className="save-delete-buttons">
+                <button type="submit" className="btn">
+                  Save
+                </button>
+                <button
+                  onClick={handleDeleteRecipe}
+                  type="button"
+                  className="btn btn-danger"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
           <div className="profile__settings">
@@ -184,22 +197,6 @@ const RecipeDetails = ({
             </div>
           </div>
         </div>
-        {editMode ? (
-          <div className="form_footer">
-            <button type="submit" className="btn">
-              Save
-            </button>
-            <button
-              onClick={handleDeleteRecipe}
-              type="button"
-              className="btn btn-danger"
-            >
-              Delete
-            </button>
-          </div>
-        ) : (
-          ""
-        )}
       </form>
 
       <form style={{ display: "none" }}>

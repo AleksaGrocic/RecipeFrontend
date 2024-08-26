@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { getRecipes, saveRecipe } from "./api/RecipeService";
+import { getRecipes, saveRecipe, updateImage } from "./api/RecipeService";
 import Header from "./components/Header";
 import RecipeList from "./components/RecipeList";
 import RecipeDetails from "./components/RecipeDetails";
@@ -53,6 +53,14 @@ function App() {
     }
   };
 
+  const resetValues = () => {
+    setValues({
+      name: "",
+      category: "",
+      recipe: "",
+    });
+  };
+
   const updateRecipe = async (recipe) => {
     try {
       const { data } = await saveRecipe(recipe);
@@ -66,6 +74,7 @@ function App() {
 
   const changeImage = async (formData) => {
     try {
+      const { data: imageUrl } = await updateImage(formData);
       toastSuccess("Image updated!");
     } catch (error) {
       console.log(error);
@@ -73,8 +82,10 @@ function App() {
     }
   };
 
-  const toggleModal = (show) =>
+  const toggleModal = (show) => {
     show ? modalRef.current.showModal() : modalRef.current.close();
+    resetValues();
+  };
 
   const onChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
@@ -87,14 +98,11 @@ function App() {
       const formData = new FormData();
       formData.append("file", file, file.name);
       formData.append("id", data.id);
+      const { data: imageUrl } = await updateImage(formData);
       toggleModal(false);
       setFile(undefined);
       fileRef.current.value = null;
-      setValues({
-        name: "",
-        category: "",
-        recipe: "",
-      });
+      resetValues();
       getAllRecipes();
       toastSuccess("Recipe created!");
     } catch (error) {
@@ -110,8 +118,13 @@ function App() {
     setCurrentPage(0);
   };
 
-  const recipeDeletedToast = () => {
-    toastSuccess("Recipe deleted!");
+  const recipeDeleted = async () => {
+    try {
+      toastSuccess("Recipe deleted!");
+    } catch (error) {
+      console.log(error);
+      toastError(error.message);
+    }
   };
 
   useEffect(() => {
@@ -128,10 +141,14 @@ function App() {
 
   return (
     <>
-      <Header toggleModal={toggleModal} numberOfRecipes={data.totalElements} />
+      <Header
+        toggleModal={toggleModal}
+        numberOfRecipes={data.totalElements}
+        selectedTab={selectedTab}
+      />
       <main className="main">
         <div className="container">
-          {data.content.length > 0 && selectedTab === "recipeList" && (
+          {selectedTab === "recipeList" && (
             <div className="category-filter">
               <label htmlFor="category-select">Filter by category: </label>
               <select
@@ -167,7 +184,7 @@ function App() {
                   updateRecipe={updateRecipe}
                   changeImage={changeImage}
                   getAllRecipes={getAllRecipes}
-                  recipeDeletedToast={recipeDeletedToast}
+                  recipeDeleted={recipeDeleted}
                 />
               }
             />
