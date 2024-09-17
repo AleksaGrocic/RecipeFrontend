@@ -4,13 +4,11 @@ import Recipe from "./Recipe";
 const RecipeList = ({ data }) => {
   return (
     <main className="main">
-      {data?.content?.length === 0 && <div>No Recipes</div>}
+      {data?.length === 0 && <div>No recipes.</div>}
 
       <ul className="recipe__list">
-        {data?.content?.length > 0 &&
-          data.content.map((recipe) => (
-            <Recipe recipe={recipe} key={recipe.id} />
-          ))}
+        {data?.length > 0 &&
+          data.map((recipe) => <Recipe recipe={recipe} key={recipe.id} />)}
       </ul>
     </main>
   );

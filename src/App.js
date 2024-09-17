@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { getRecipes, saveRecipe, updateImage } from "./api/RecipeService";
@@ -13,8 +15,7 @@ function App() {
   const modalRef = useRef();
   const fileRef = useRef();
   const location = useLocation();
-  const [data, setData] = useState({ content: [], totalElements: 0 });
-  const [currentPage, setCurrentPage] = useState(0);
+  const [data, setData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [values, setValues] = useState({
@@ -25,25 +26,20 @@ function App() {
   const [file, setFile] = useState(undefined);
   const [selectedTab, setSelectedTab] = useState("recipeList");
 
-  const getAllRecipes = async (
-    page = 0,
-    size = 1000,
-    category = selectedCategory
-  ) => {
+  const getAllRecipes = async (category = selectedCategory) => {
     try {
-      const { data } = await getRecipes(page, size);
+      const { data: recipes } = await getRecipes();
 
       const uniqueCategories = [
         "All",
-        ...new Set(data.content.map((recipe) => recipe.category)),
+        ...new Set(recipes.map((recipe) => recipe.category)),
       ];
       setCategories(uniqueCategories);
 
-      const filteredRecipes = { ...data };
-      filteredRecipes.content =
+      const filteredRecipes =
         category === "All"
-          ? data.content
-          : data.content.filter((recipe) => recipe.category === category);
+          ? recipes
+          : recipes.filter((recipe) => recipe.category === category);
 
       setData(filteredRecipes);
       console.log(filteredRecipes);
@@ -82,13 +78,13 @@ function App() {
     }
   };
 
+  const onChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value });
+  };
+
   const toggleModal = (show) => {
     show ? modalRef.current.showModal() : modalRef.current.close();
     resetValues();
-  };
-
-  const onChange = (event) => {
-    setValues({ ...values, [event.target.name]: event.target.value });
   };
 
   const handleNewRecipe = async (event) => {
@@ -114,8 +110,7 @@ function App() {
   const handleCategoryChange = async (event) => {
     const newCategory = event.target.value;
     setSelectedCategory(newCategory);
-    await getAllRecipes(0, 1000, newCategory);
-    setCurrentPage(0);
+    await getAllRecipes(newCategory);
   };
 
   const recipeDeleted = async () => {
@@ -143,7 +138,7 @@ function App() {
     <>
       <Header
         toggleModal={toggleModal}
-        numberOfRecipes={data.totalElements}
+        numberOfRecipes={data.length}
         selectedTab={selectedTab}
       />
       <main className="main">
@@ -169,13 +164,7 @@ function App() {
             <Route path="/" element={<Navigate to={"/recipes"} />} />
             <Route
               path="/recipes"
-              element={
-                <RecipeList
-                  data={data}
-                  currentPage={currentPage}
-                  getAllRecipes={getAllRecipes}
-                />
-              }
+              element={<RecipeList data={data} getAllRecipes={getAllRecipes} />}
             />
             <Route
               path="/recipes/:id"
